@@ -7,6 +7,7 @@ from src.obfuscator import Obfuscator
 from src.reader import Reader
 from src.writer import Writer
 
+
 class App:
     def __init__(self) -> None:
         self.parser = argparse.ArgumentParser()

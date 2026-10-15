@@ -3,6 +3,13 @@ import random
 from collections import deque
 
 
+class Entry:
+    ORIGINAL = 0
+    GARBAGE = 1
+    def __init__(self, content: str, flag: int) -> None:
+        self.content = content
+        self.flag = flag
+
 class Obfuscator:
     WORDS: tuple[str] = (
         "the", "be", "to", "of", "and", "a", "in", "that", "have", "i", "it", "for", "not", "on", "with", "he", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "she", "or", "an", "will", "my", "one", "all", "would", "there", "their", "what", "so", "up", "out", "if", "about", "who", "get", "which", "go", "me", "when", "make", "can", "like", "time", "no", "just", "him", "know", "take", "people", "into", "year", "your", "good", "some", "could", "them", "see", "other", "than", "then", "now", "look", "only", "come", "its", "over", "think", "also", "back", "after", "use", "two", "how", "our", "work", "first", "well", "way", "even", "new", "want", "because", "any", "these", "give", "day", "most", "us",
@@ -37,13 +44,13 @@ class Obfuscator:
             if roll < 21: # punctuation will appear 20% of the time
                 new_item = random.choices(self.PUNCTUATION, self.PUNCTUATION_FREQUENCIES)[0]
             elif roll > 85: # capital words will appear 15% of the time
-                new_item = random.choice(self.WORDS).title()
+                new_item = " " + random.choice(self.WORDS).title()
             else: # random words appear 65% of the time
-                new_item = random.choice(self.WORDS)
+                new_item = " " + random.choice(self.WORDS)
 
             # escape if there are too many characters, this does not guarantee that the target is met
             character_count += len(new_item)
-            if character_count > target:
+            if character_count > target - 1: # we need to inject a space at the end
                 character_count -= len(new_item)
                 break
 
@@ -51,10 +58,11 @@ class Obfuscator:
 
         # the while loop is not guaranteed to generate a string of length 'target'
         # therefore we fill the empty space with numbers
-        garbage += "".join([random.choice(self.NUMBERS) for _ in range(target - character_count)])
+        garbage += "".join([random.choice(self.NUMBERS) for _ in range(target - character_count - 1)])
+        garbage += " "
         return garbage
 
-    def obfuscate(self, raw: str) -> deque:
+    def obfuscate(self, raw: str) -> deque[Entry]:
         """
         Takes a string and replaces all spaces with random words and punctuation.
         Then returns a stack containing each word followed by noise
@@ -70,8 +78,8 @@ class Obfuscator:
         words = raw.split(" ")
         output = deque()
         for word in words:
-            output.append(word)
-            output.append(self.generate_garbage(20))
+            output.append(Entry(word, Entry.ORIGINAL))
+            output.append(Entry(self.generate_garbage(20), Entry.GARBAGE))
         return output
 
 if __name__ == "__main__":
