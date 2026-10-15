@@ -3,9 +3,9 @@ import argparse
 from pathlib import Path
 
 # project
-from obfuscator import Obfuscator
+from src.obfuscator import Obfuscator
 from src.reader import Reader
-
+from src.writer import Writer
 
 class App:
     def __init__(self) -> None:
@@ -19,14 +19,12 @@ class App:
 
         self.obfuscator = Obfuscator()
         self.reader = Reader()
+        self.writer = Writer()
 
     def run(self) -> None:
-        print(self.args.path)
         raw = self.reader.read_document(self.args.path)
-        print(raw)
-
         polluted = self.obfuscator.obfuscate(raw)
-        print(polluted)
+        self.writer.write(polluted)
 
 if __name__ == "__main__":
     app = App()
