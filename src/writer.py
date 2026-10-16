@@ -7,7 +7,7 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
 # project
-from src.obfuscator import Entry
+from src.obfuscator.obfuscator import Entry
 
 
 class Writer:
@@ -21,7 +21,7 @@ class Writer:
         for entry in contents:
             if entry.flag == Entry.ORIGINAL:
                 first, *other = entry.content.split("\n")
-                lines[-1] += first
+                lines[-1] += f'<font name="Times-Roman" size="12" color="black">{first}</font>'
                 lines.extend(other)
             else:
                 lines[-1] += f'<font name="Courier" size="0.25" color="white">{entry.content}</font>'

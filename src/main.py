@@ -3,7 +3,7 @@ import argparse
 from pathlib import Path
 
 # project
-from src.obfuscator import Obfuscator
+from src.obfuscator.obfuscator import Obfuscator
 from src.reader import Reader
 from src.writer import Writer
 
@@ -18,7 +18,7 @@ class App:
         )
         self.args = self.parser.parse_args()
 
-        self.obfuscator = Obfuscator()
+        self.obfuscator = Obfuscator(30)
         self.reader = Reader()
         self.writer = Writer()
 
